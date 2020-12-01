@@ -8,18 +8,22 @@ import (
 )
 
 func main() {
-	var x, i, z int
+	var i, j int
 	sum := int64(2020)
 	numArr := ReadInput()
+	cache := make(map[int64]int64)
 
 	for i = 0; i < len(numArr); i++ {
-		for x = i + 1; x < len(numArr); x++ {
-			for z = i + 2; z < len(numArr); z++ {
-				if numArr[i]+numArr[x]+numArr[z] == sum {
-					fmt.Println(numArr[i] * numArr[x] * numArr[z])
-				}
+		for j = i + 1; j < len(numArr); j++ {
+			val, exists := cache[sum-numArr[i]-numArr[j]]
+			if exists {
+				fmt.Println(numArr[i] * numArr[j] * val)
+			} else {
+				cache[numArr[j]] = numArr[j]
+				cache[numArr[i]] = numArr[i]
 			}
 		}
+
 	}
 }
 
