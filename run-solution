@@ -5,4 +5,4 @@ if [ -z $1 ]; then
   exit 1
 fi
 
-go run $1/main.go
+go run $1/main.go $2
