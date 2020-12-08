@@ -4,15 +4,14 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
 type Bag struct {
 	color string
-	holds []Bag
+	count int64
 }
-
-var total int
 
 func main() {
 	arg := os.Args[1]
@@ -25,7 +24,13 @@ func main() {
 }
 
 func part2() {
+	totalBags := 0
+	data := ReadInput("./day7/input")
+	bags := MakeBagMap(data)
+	fmt.Println(bags["shiny gold"])
+	totalBags = TotalBags("shiny gold", bags)
 
+	fmt.Println(totalBags)
 }
 
 func part1() {
@@ -34,6 +39,9 @@ func part1() {
 	bags := MakeBagMap(data)
 
 	for bag, _ := range bags {
+		if(bag == "shiny gold") {
+			continue
+		}
 		if FindGoldenBag(bag, bags) {
 			totalBags++
 		}
@@ -44,8 +52,8 @@ func part1() {
 }
 
 // MakeBagMap - Creates a key-value map of bags, which describe the color and what bags each can hold
-func MakeBagMap(data []string) map[string][]string {
-	bags := make(map[string][]string)
+func MakeBagMap(data []string) map[string][]Bag {
+	bags := make(map[string][]Bag)
 	for _, in := range data {
 		in = strings.Replace(in, "bags", "", -1)
 		in = strings.Replace(in, "bag", "", -1)
@@ -53,13 +61,17 @@ func MakeBagMap(data []string) map[string][]string {
 
 		rule := strings.Split(in, "contain")
 		sourceBagName := strings.TrimSpace(rule[0])
-		destinationBags := []string{}
+		destinationBags := []Bag{}
 
 		for _, val := range strings.Split(rule[1], ",") {
 			bagDetails := strings.Split(val, " ")
 			bagName := strings.TrimSpace(fmt.Sprintf("%s %s", bagDetails[2], bagDetails[3]))
-
-			destinationBags = append(destinationBags, bagName)
+			bagCount, _ := strconv.ParseInt(bagDetails[1], 10 ,0)
+			bag := Bag{
+				color: bagName,
+				count: bagCount,
+			}
+			destinationBags = append(destinationBags, bag)
 		}
 
 		bags[sourceBagName] = destinationBags
@@ -68,7 +80,16 @@ func MakeBagMap(data []string) map[string][]string {
 	return bags
 }
 
-func FindGoldenBag(bag string, bagMap map[string][]string) bool {
+func TotalBags(bag string, bagMap map[string][]Bag) int {
+	total := 0
+	val, _ := bagMap[bag]
+	for _, destBag := range(val) {
+		total += int(destBag.count) + int(destBag.count) * TotalBags(destBag.color, bagMap)
+	}
+	return total
+}
+
+func FindGoldenBag(bag string, bagMap map[string][]Bag) bool {
 	if bag == "shiny gold" {
 		return true
 	} else if val, _ := bagMap[bag]; len(val) == 0 {
@@ -78,13 +99,21 @@ func FindGoldenBag(bag string, bagMap map[string][]string) bool {
 	}
 }
 
-func Any(vs []string, bagMap map[string][]string, f func(string, map[string][]string) bool) bool {
+func Any(vs []Bag, bagMap map[string][]Bag, f func(string, map[string][]Bag) bool) bool {
 	for _, v := range vs {
-		if f(v, bagMap) {
+		if f(v.color, bagMap) {
 			return true
 		}
 	}
 	return false
+}
+
+func All(vs []Bag, bagMap map[string][]Bag, f func(string, map[string][]Bag) int) int {
+	total := 1
+	for _, v := range vs {
+		total += int(v.count) * f(v.color, bagMap) 
+	}
+	return total
 }
 
 func ReadInput(path string) []string {
