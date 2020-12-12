@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if [ -z $1 ]; then
+  echo "You must provide a day to setup."
+  exit 1
+fi
+
+if [ -d ./$1 ]; then
+  echo "Folder already exists for provided day"
+  exit 1
+fi
+
+mkdir ./$1
+
+cp ./templates/* $1
+
+sed -i '' "s/\#DAY\#/$1/g" $1/main.go

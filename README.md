@@ -15,3 +15,11 @@ You can also provide additional arguments to the command to run each part of eac
 ```
 ./run-solution day1 part1
 ```
+
+## Setup a New Day
+
+To make it easy to set up boilerplate code for a new day, templates and a script have been provided to configure a new day automaticaly. To do this, just run the `setup-day` script and provide the day you wish to configure. e.g.
+
+```
+./setup-day day1
+```
