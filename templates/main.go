@@ -36,17 +36,12 @@ func ReadInput(path string) []string {
 	}
 
 	defer file.Close()
-	var data []int
+	var data []string
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
-		val, err := strconv.ParseInt(scanner.Text(), 10, 0)
-
-		if err != nil {
-			fmt.Println(err.Error())
-			return nil
 		}
-		data = append(data, int(val))
+		data = append(data, scanner.Text())
 	}
 
 	return data
