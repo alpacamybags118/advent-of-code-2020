@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 )
 
 func main() {
@@ -40,7 +39,6 @@ func ReadInput(path string) []string {
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
-		}
 		data = append(data, scanner.Text())
 	}
 
